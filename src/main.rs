@@ -4,9 +4,12 @@ mod bindings {
 
 extern crate libc;
 
-use std::mem::size_of;
+use std::{mem::size_of, ptr::null};
 
-use bindings::{Windows::Win32::SystemServices::*, Windows::Win32::WindowsAndMessaging::*};
+use bindings::{
+    Windows::Win32::Gdi::*, Windows::Win32::MenusAndResources::*,
+    Windows::Win32::SystemServices::*, Windows::Win32::WindowsAndMessaging::*,
+};
 use libc::c_void;
 use std::ptr::null_mut;
 use windows::HRESULT;
@@ -24,24 +27,34 @@ unsafe extern "system" fn window_proc(
             }
             LRESULT(0)
         }
-        _ => unsafe { DefWindowProcA(hwnd, uMsg, wParam, lParam) },
+        _ => unsafe { DefWindowProcW(hwnd, uMsg, wParam, lParam) },
     }
 }
 
 fn main() -> windows::Result<()> {
     unsafe {
-        let hInstance = HINSTANCE(GetModuleHandleA(PSTR(&mut 0)));
+        let hInstance = HINSTANCE(GetModuleHandleW(PWSTR(&mut 0)));
 
-        let CLASS_NAME = PSTR(b"Sample Window Class\0".as_ptr() as _);
+        let CLASS_NAME = PWSTR(b"Sample Window Class\0".as_ptr() as _);
 
-        let wc = libc::malloc(size_of::<WNDCLASSA>()) as *mut WNDCLASSA;
-        (*wc).lpfnWndProc = Some(window_proc);
-        (*wc).hInstance = hInstance;
-        (*wc).lpszClassName = CLASS_NAME;
+        let wc = WNDCLASSW {
+            style: WNDCLASS_STYLES::CS_OWNDC
+                | WNDCLASS_STYLES::CS_HREDRAW
+                | WNDCLASS_STYLES::CS_VREDRAW,
+            lpfnWndProc: Some(window_proc),
+            hInstance,
+            lpszClassName: CLASS_NAME,
+            cbClsExtra: 0,
+            cbWndExtra: 0,
+            hIcon: HICON(0),
+            hCursor: HCURSOR(0),
+            hbrBackground: HBRUSH(0),
+            lpszMenuName: PWSTR(&mut 0),
+        };
 
-        RegisterClassA(wc as *const WNDCLASSA);
+        RegisterClassW(&wc as *const WNDCLASSW);
 
-        let hwnd = CreateWindowExA(
+        let hwnd = CreateWindowExW(
             WINDOW_EX_STYLE::WS_EX_LEFT,
             CLASS_NAME,
             "Learn to Program Windows",
@@ -56,8 +69,6 @@ fn main() -> windows::Result<()> {
             null_mut(),
         );
 
-        println!("{:?}", hwnd.is_null());
-
         if hwnd.is_null() {
             return Err(windows::Error::fast_error(HRESULT(0x1012001)));
         }
@@ -66,9 +77,9 @@ fn main() -> windows::Result<()> {
 
         let msg = libc::malloc(size_of::<MSG>()) as *mut MSG;
 
-        while GetMessageA(msg, None, 0, 0).as_bool() {
+        while GetMessageW(msg, None, 0, 0).as_bool() {
             TranslateMessage(msg);
-            DispatchMessageA(msg);
+            DispatchMessageW(msg);
         }
     }
 
