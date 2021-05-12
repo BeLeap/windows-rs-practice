@@ -1,0 +1,31 @@
+fn main() {
+    windows::build!(
+        Windows::Win32::WindowsAndMessaging::{
+            HWND,
+            WPARAM,
+            LPARAM,
+            WM_DESTROY,
+            PostQuitMessage,
+            DefWindowProcA,
+            WNDCLASSA,
+            WNDCLASS_STYLES,
+            RegisterClassA,
+            CreateWindowExA,
+            CW_USEDEFAULT,
+            ShowWindow,
+            SHOW_WINDOW_CMD,
+            MSG,
+            GetMessageA,
+            TranslateMessage,
+            DispatchMessageA,
+            WINDOW_EX_STYLE,
+        },
+        Windows::Win32::SystemServices::{
+            LRESULT,
+            HINSTANCE,
+            PWSTR,
+            PSTR,
+            GetModuleHandleA,
+        },
+    );
+}
