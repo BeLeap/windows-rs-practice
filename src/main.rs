@@ -2,48 +2,43 @@ mod bindings {
     windows::include_bindings!();
 }
 
-extern crate libc;
-
-use std::{mem::size_of, ptr::null};
-
 use bindings::{
     Windows::Win32::Gdi::*, Windows::Win32::MenusAndResources::*,
     Windows::Win32::SystemServices::*, Windows::Win32::WindowsAndMessaging::*,
 };
-use libc::c_void;
+use libc;
+use std::mem::size_of;
 use std::ptr::null_mut;
 use windows::HRESULT;
 
 unsafe extern "system" fn window_proc(
     hwnd: HWND,
-    uMsg: u32,
-    wParam: WPARAM,
-    lParam: LPARAM,
+    u_msg: u32,
+    w_param: WPARAM,
+    l_param: LPARAM,
 ) -> LRESULT {
-    match uMsg {
+    match u_msg {
         WM_DESTROY => {
-            unsafe {
-                PostQuitMessage(0);
-            }
+            PostQuitMessage(0);
             LRESULT(0)
         }
-        _ => unsafe { DefWindowProcW(hwnd, uMsg, wParam, lParam) },
+        _ => DefWindowProcW(hwnd, u_msg, w_param, l_param),
     }
 }
 
 fn main() -> windows::Result<()> {
     unsafe {
-        let hInstance = HINSTANCE(GetModuleHandleW(PWSTR(&mut 0)));
+        let h_instance = HINSTANCE(GetModuleHandleW(PWSTR(&mut 0)));
 
-        let CLASS_NAME = PWSTR(b"Sample Window Class\0".as_ptr() as _);
+        let class_name = PWSTR(b"Sample Window Class\0".as_ptr() as _);
 
         let wc = WNDCLASSW {
             style: WNDCLASS_STYLES::CS_OWNDC
                 | WNDCLASS_STYLES::CS_HREDRAW
                 | WNDCLASS_STYLES::CS_VREDRAW,
             lpfnWndProc: Some(window_proc),
-            hInstance,
-            lpszClassName: CLASS_NAME,
+            hInstance: h_instance,
+            lpszClassName: class_name,
             cbClsExtra: 0,
             cbWndExtra: 0,
             hIcon: HICON(0),
@@ -56,7 +51,7 @@ fn main() -> windows::Result<()> {
 
         let hwnd = CreateWindowExW(
             WINDOW_EX_STYLE::WS_EX_LEFT,
-            CLASS_NAME,
+            class_name,
             "Learn to Program Windows",
             WINDOW_STYLE::WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT,
@@ -65,7 +60,7 @@ fn main() -> windows::Result<()> {
             CW_USEDEFAULT,
             None,
             None,
-            Some(hInstance),
+            Some(h_instance),
             null_mut(),
         );
 
