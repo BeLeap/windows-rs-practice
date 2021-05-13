@@ -21,9 +21,9 @@ fn main() {
             CS_OWNDC,
             CS_HREDRAW,
             CS_VREDRAW,
-            WS_EX_LEFT,
             WS_OVERLAPPEDWINDOW,
             SW_SHOW,
+            WM_QUIT,
         },
         Windows::Win32::System::SystemServices::{
             LRESULT,
@@ -31,10 +31,6 @@ fn main() {
             PWSTR,
             GetModuleHandleW,
             BOOL,
-        },
-        Windows::Win32::UI::MenusAndResources::{
-            HICON,
-            HCURSOR,
         },
         Windows::Win32::Graphics::Gdi::{
             HBRUSH,
