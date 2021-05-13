@@ -18,9 +18,6 @@ fn main() {
             DispatchMessageW,
             WM_PAINT,
             COLOR_WINDOW,
-            CS_OWNDC,
-            CS_HREDRAW,
-            CS_VREDRAW,
             WS_OVERLAPPEDWINDOW,
             SW_SHOW,
             WM_QUIT,
@@ -40,6 +37,5 @@ fn main() {
             FillRect,
             EndPaint,
         },
-        Windows::Win32::UI::DisplayDevices::RECT,
     );
 }

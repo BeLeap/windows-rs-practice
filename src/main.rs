@@ -3,9 +3,7 @@ mod bindings {
 }
 
 use bindings::Windows::Win32::{
-    Graphics::Gdi::*,
-    System::SystemServices::*,
-    UI::{DisplayDevices::*, WindowsAndMessaging::*},
+    Graphics::Gdi::*, System::SystemServices::*, UI::WindowsAndMessaging::*,
 };
 use windows::HRESULT;
 
@@ -28,19 +26,7 @@ impl Window {
                 LRESULT(0)
             }
             WM_PAINT => {
-                let mut ps = PAINTSTRUCT {
-                    hdc: HDC(0),
-                    fErase: BOOL(0),
-                    rcPaint: RECT {
-                        left: 0,
-                        top: 0,
-                        right: 400,
-                        bottom: 400,
-                    },
-                    fRestore: BOOL(0),
-                    fIncUpdate: BOOL(0),
-                    rgbReserved: [0; 32],
-                };
+                let mut ps = PAINTSTRUCT::default();
                 let hdc = BeginPaint(hwnd, &mut ps);
 
                 let color: u32 = COLOR_WINDOW.0 + 1;
