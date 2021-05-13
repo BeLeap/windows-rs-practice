@@ -3,7 +3,8 @@ mod bindings {
 }
 
 use bindings::Windows::Win32::{
-    Graphics::Gdi::*, System::SystemServices::*, UI::WindowsAndMessaging::*,
+    Graphics::Gdi::*, System::SystemServices::*, UI::DisplayDevices::RECT,
+    UI::WindowsAndMessaging::*,
 };
 use windows::HRESULT;
 
@@ -27,9 +28,15 @@ impl Window {
             }
             WM_PAINT => {
                 let mut ps = PAINTSTRUCT::default();
+                ps.rcPaint = RECT {
+                    left: 0,
+                    top: 0,
+                    right: 1000,
+                    bottom: 1000,
+                };
                 let hdc = BeginPaint(hwnd, &mut ps);
 
-                let color: u32 = COLOR_WINDOW.0 + 1;
+                let color: u32 = COLOR_WINDOW.0 + 2;
                 FillRect(hdc, &mut ps.rcPaint, HBRUSH(color as isize));
 
                 EndPaint(hwnd, &mut ps);
@@ -38,8 +45,8 @@ impl Window {
             WM_CLOSE => {
                 if MessageBoxA(
                     hwnd,
-                    PSTR(b"Really quit?".as_ptr() as _),
-                    PSTR(b"My application".as_ptr() as _),
+                    PSTR(b"Really quit?\0".as_ptr() as _),
+                    PSTR(b"My application\0".as_ptr() as _),
                     MB_OKCANCEL,
                 )
                 .0 == 1
@@ -70,7 +77,7 @@ impl Window {
             let hwnd = CreateWindowExA(
                 Default::default(),
                 class_name,
-                "Learn to Program Windows",
+                "Learn to Program Windows\0",
                 WS_OVERLAPPEDWINDOW,
                 CW_USEDEFAULT,
                 CW_USEDEFAULT,

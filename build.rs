@@ -41,5 +41,6 @@ fn main() {
             FillRect,
             EndPaint,
         },
+        Windows::Win32::UI::DisplayDevices::RECT,
     );
 }
