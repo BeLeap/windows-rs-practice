@@ -2,9 +2,10 @@ mod bindings {
     windows::include_bindings!();
 }
 
-use bindings::{
-    Windows::Win32::Gdi::*, Windows::Win32::MenusAndResources::*,
-    Windows::Win32::SystemServices::*, Windows::Win32::WindowsAndMessaging::*,
+use bindings::Windows::Win32::{
+    Graphics::Gdi::*,
+    System::SystemServices::*,
+    UI::{DisplayDevices::*, MenusAndResources::*, WindowsAndMessaging::*},
 };
 use libc;
 use std::mem::size_of;
@@ -28,14 +29,12 @@ unsafe extern "system" fn window_proc(
 
 fn main() -> windows::Result<()> {
     unsafe {
-        let h_instance = HINSTANCE(GetModuleHandleW(PWSTR(&mut 0)));
+        let h_instance = GetModuleHandleW(PWSTR(&mut 0));
 
         let class_name = PWSTR(b"Sample Window Class\0".as_ptr() as _);
 
         let wc = WNDCLASSW {
-            style: WNDCLASS_STYLES::CS_OWNDC
-                | WNDCLASS_STYLES::CS_HREDRAW
-                | WNDCLASS_STYLES::CS_VREDRAW,
+            style: CS_OWNDC | CS_HREDRAW | CS_VREDRAW,
             lpfnWndProc: Some(window_proc),
             hInstance: h_instance,
             lpszClassName: class_name,
@@ -50,10 +49,10 @@ fn main() -> windows::Result<()> {
         RegisterClassW(&wc as *const WNDCLASSW);
 
         let hwnd = CreateWindowExW(
-            WINDOW_EX_STYLE::WS_EX_LEFT,
+            WS_EX_LEFT,
             class_name,
             "Learn to Program Windows",
-            WINDOW_STYLE::WS_OVERLAPPEDWINDOW,
+            WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
@@ -68,7 +67,7 @@ fn main() -> windows::Result<()> {
             return Err(windows::Error::fast_error(HRESULT(0x1012001)));
         }
 
-        ShowWindow(hwnd, SHOW_WINDOW_CMD::SW_SHOW);
+        ShowWindow(hwnd, SW_SHOW);
 
         let msg = libc::malloc(size_of::<MSG>()) as *mut MSG;
 

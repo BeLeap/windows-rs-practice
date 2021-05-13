@@ -1,6 +1,6 @@
 fn main() {
     windows::build!(
-        Windows::Win32::WindowsAndMessaging::{
+        Windows::Win32::UI::WindowsAndMessaging::{
             HWND,
             WPARAM,
             LPARAM,
@@ -8,28 +8,42 @@ fn main() {
             PostQuitMessage,
             DefWindowProcW,
             WNDCLASSW,
-            WNDCLASS_STYLES,
             RegisterClassW,
             CreateWindowExW,
             CW_USEDEFAULT,
             ShowWindow,
-            SHOW_WINDOW_CMD,
             MSG,
             GetMessageW,
             TranslateMessage,
             DispatchMessageW,
-            WINDOW_EX_STYLE,
+            WM_PAINT,
+            COLOR_WINDOW,
+            CS_OWNDC,
+            CS_HREDRAW,
+            CS_VREDRAW,
+            WS_EX_LEFT,
+            WS_OVERLAPPEDWINDOW,
+            SW_SHOW,
         },
-        Windows::Win32::SystemServices::{
+        Windows::Win32::System::SystemServices::{
             LRESULT,
             HINSTANCE,
             PWSTR,
             GetModuleHandleW,
+            BOOL,
         },
-        Windows::Win32::MenusAndResources::{
+        Windows::Win32::UI::MenusAndResources::{
             HICON,
             HCURSOR,
         },
-        Windows::Win32::Gdi::HBRUSH,
+        Windows::Win32::Graphics::Gdi::{
+            HBRUSH,
+            PAINTSTRUCT,
+            HDC,
+            BeginPaint,
+            FillRect,
+            EndPaint,
+        },
+        Windows::Win32::UI::DisplayDevices::RECT,
     );
 }
