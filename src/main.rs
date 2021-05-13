@@ -30,32 +30,44 @@ impl Window {
                 let hdc = BeginPaint(hwnd, &mut ps);
 
                 let color: u32 = COLOR_WINDOW.0 + 1;
-                print!("{}", color);
                 FillRect(hdc, &mut ps.rcPaint, HBRUSH(color as isize));
 
                 EndPaint(hwnd, &mut ps);
                 LRESULT(0)
             }
-            _ => DefWindowProcW(hwnd, u_msg, w_param, l_param),
+            WM_CLOSE => {
+                if MessageBoxA(
+                    hwnd,
+                    PSTR(b"Really quit?".as_ptr() as _),
+                    PSTR(b"My application".as_ptr() as _),
+                    MB_OKCANCEL,
+                )
+                .0 == 1
+                {
+                    DestroyWindow(hwnd);
+                }
+                LRESULT(0)
+            }
+            _ => DefWindowProcA(hwnd, u_msg, w_param, l_param),
         }
     }
 
     fn run(&mut self) -> windows::Result<()> {
         unsafe {
-            let h_instance = GetModuleHandleW(PWSTR(&mut 0));
+            let h_instance = GetModuleHandleA(PSTR(&mut 0));
 
-            let class_name = PWSTR(b"Sample Window Class\0".as_ptr() as _);
+            let class_name = PSTR(b"Sample Window Class\0".as_ptr() as _);
 
-            let wc = WNDCLASSW {
+            let wc = WNDCLASSA {
                 lpfnWndProc: Some(Self::window_proc),
                 hInstance: h_instance,
                 lpszClassName: class_name,
                 ..Default::default()
             };
 
-            RegisterClassW(&wc as *const WNDCLASSW);
+            RegisterClassA(&wc as *const WNDCLASSA);
 
-            let hwnd = CreateWindowExW(
+            let hwnd = CreateWindowExA(
                 Default::default(),
                 class_name,
                 "Learn to Program Windows",
@@ -78,9 +90,9 @@ impl Window {
 
             let mut msg = MSG::default();
 
-            while GetMessageW(&mut msg, None, 0, 0).as_bool() {
+            while GetMessageA(&mut msg, None, 0, 0).as_bool() {
                 TranslateMessage(&mut msg);
-                DispatchMessageW(&mut msg);
+                DispatchMessageA(&mut msg);
             }
         }
 
