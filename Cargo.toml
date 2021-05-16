@@ -1,14 +1,6 @@
-[package]
-authors = ["BeLeap <changseo_jang@korea.ac.kr>"]
-edition = "2018"
-name = "windows-rs-practice"
-version = "0.1.0"
+[workspace]
+members = [
+  "module_*",
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-libc = "*"
-windows = "0.10.0"
-
-[build-dependencies]
-windows = "0.10.0"

@@ -83,7 +83,7 @@ impl Window {
             );
 
             if hwnd.is_null() {
-                return Err(windows::Error::fast_error(HRESULT(0x1012002)));
+                return Err(windows::Error::fast_error(HRESULT(0x81012002)));
             }
 
             ShowWindow(hwnd, SW_SHOW);
