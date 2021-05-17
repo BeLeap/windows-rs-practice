@@ -5,7 +5,7 @@ mod bindings {
 use bindings::Windows::Win32::{
     System::Com::*, System::SystemServices::*, UI::Shell::*, UI::WindowsAndMessaging::*,
 };
-use libc::c_void;
+use std::ffi::c_void;
 use std::ptr::null_mut;
 
 struct Window {}
@@ -39,12 +39,7 @@ impl Window {
                             .GetDisplayName(SIGDN_FILESYSPATH, &mut file_path);
 
                         if hr.is_ok() {
-                            MessageBoxW(
-                                None,
-                                file_path,
-                                PWSTR(b"File Path\0".as_ptr() as _),
-                                MB_OK,
-                            );
+                            MessageBoxW(None, file_path, "File Path", MB_OK);
                             CoTaskMemFree(file_path.0 as *mut c_void);
                         }
                     }
