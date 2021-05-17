@@ -5,6 +5,7 @@ mod bindings {
 use bindings::Windows::Win32::{
     System::Com::*, System::SystemServices::*, UI::Shell::*, UI::WindowsAndMessaging::*,
 };
+use libc::c_void;
 use std::ptr::null_mut;
 
 struct Window {}
@@ -28,12 +29,12 @@ impl Window {
                 let hr = file_open.Show(None);
 
                 if hr.is_ok() {
-                    let mut some_item: Option<IShellItem> = None;
-                    let hr = file_open.GetResult(&mut some_item);
+                    let mut item: Option<IShellItem> = None;
+                    let hr = file_open.GetResult(&mut item);
 
                     if hr.is_ok() {
                         let mut file_path = PWSTR(b"\0".as_ptr() as _);
-                        let hr = some_item
+                        let hr = item
                             .unwrap()
                             .GetDisplayName(SIGDN_FILESYSPATH, &mut file_path);
 
@@ -44,6 +45,7 @@ impl Window {
                                 PWSTR(b"File Path\0".as_ptr() as _),
                                 MB_OK,
                             );
+                            CoTaskMemFree(file_path.0 as *mut c_void);
                         }
                     }
                 }
