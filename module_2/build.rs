@@ -1,3 +1,28 @@
 fn main() {
-    windows::build!()
+    windows::build!(
+        Windows::Win32::System::Com::{
+            CoInitializeEx,
+            COINIT_APARTMENTTHREADED,
+            COINIT_DISABLE_OLE1DDE,
+            CoCreateInstance,
+            CLSCTX_ALL,
+            CoTaskMemFree,
+            CoUninitialize,
+        },
+        Windows::Win32::UI::Shell::{
+            IFileOpenDialog,
+            FileOpenDialog,
+            IShellItem,
+            SIGDN,
+            SIGDN_FILESYSPATH,
+        },
+        Windows::Win32::UI::WindowsAndMessaging::{
+            HWND,
+            MessageBoxW,
+            MB_OK,
+        },
+        Windows::Win32::System::SystemServices::{
+            PWSTR,
+        }
+    )
 }
